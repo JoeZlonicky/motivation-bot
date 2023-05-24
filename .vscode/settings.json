@@ -1,0 +1,8 @@
+{
+    "javascript.validate.enable": true,
+    "javascript.suggestionActions.enabled": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "eslint.validate": ["javascript"]
+}
