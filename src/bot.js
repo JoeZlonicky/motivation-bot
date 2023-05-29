@@ -4,7 +4,7 @@ const { collectCommands } = require('./collect-commands.js');
 const { CommandHandler } = require('./command-handler.js');
 
 if (!process.env.BOT_TOKEN) {
-    console.log('BOT_TOKEN is not specified in .env or anywhere else.');
+    console.error('ERROR: BOT_TOKEN is not specified in .env or anywhere else.');
     process.exit(1);
 }
 

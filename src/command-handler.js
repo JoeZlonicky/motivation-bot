@@ -22,7 +22,7 @@ class CommandHandler {
         const command = this.#commands.get(interaction.commandName);
 
         if (!command) {
-            console.log(`WARNING: No command matching ${interaction.commandName} was found.`);
+            console.error(`WARNING: No command matching ${interaction.commandName} was found.`);
             return;
         }
 

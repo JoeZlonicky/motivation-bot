@@ -67,13 +67,13 @@ function deployWithConfirmation () {
 }
 
 if (!process.env.BOT_TOKEN) {
-    console.log('BOT_TOKEN is not specified in .env or anywhere else.');
+    console.error('ERROR: BOT_TOKEN is not specified in .env or anywhere else.');
     process.exit(1);
 } else if (!process.env.DEPLOY_CLIENT_ID) {
-    console.log('DEPLOY_CLIENT_ID is not specified in .env or anywhere else.');
+    console.error('ERROR: DEPLOY_CLIENT_ID is not specified in .env or anywhere else.');
     process.exit(1);
 } else if (process.env.DEPLOY_COMMANDS_GLOBALLY !== 'true' && !process.env.DEPLOY_COMMANDS_SERVER_ID) {
-    console.log('If not deploying commands globally then DEPLOY_COMMANDS_SERVER_ID needs to be specified in .env or elsewhere.');
+    console.error('ERROR: If not deploying commands globally then DEPLOY_COMMANDS_SERVER_ID needs to be specified in .env or elsewhere.');
     process.exit(1);
 }
 

@@ -8,17 +8,17 @@ function tryAddingCommand (filePath, commands) {
     const command = require(filePath);
 
     if (!('data' in command)) {
-        console.log(`WARNING: The command at ${filePath} is missing a "data" property.`);
+        console.error(`WARNING: The command at ${filePath} is missing a "data" property.`);
         return;
     }
 
     if (!('execute' in command)) {
-        console.log(`WARNING: The command at ${filePath} is missing an "execute" method.`);
+        console.error(`WARNING: The command at ${filePath} is missing an "execute" method.`);
         return;
     }
 
     if (command.data.name in commands) {
-        console.log(`WARNING: The command at ${filePath} is using an already existing name "${command.data.name}".`);
+        console.error(`WARNING: The command at ${filePath} is using an already existing name "${command.data.name}".`);
         return;
     }
 
