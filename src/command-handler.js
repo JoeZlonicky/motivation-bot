@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-unused-vars
+const Discord = require('discord.js'); // Required just for types
+
 /**
  * On calling handleCommand will try to execute a command that matches the interaction.
  */
@@ -31,9 +34,15 @@ class CommandHandler {
         } catch (error) {
             console.error(error);
             if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+                await interaction.followUp({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true
+                });
             } else {
-                await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+                await interaction.reply({
+                    content: 'There was an error while executing this command!',
+                    ephemeral: true
+                });
             }
         }
     }

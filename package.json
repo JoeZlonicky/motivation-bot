@@ -4,14 +4,15 @@
   "description": "A base template for making a NodeJS Discord bot.",
   "main": "src/bot.js",
   "scripts": {
-    "deploy-commands": "node src/deploy-commands.js"
+    "deploy-commands": "node src/deploy-commands.js",
+    "nodemon": "./node_modules/nodemon/bin/nodemon.js"
   },
   "author": "JoeZlonicky",
   "license": "ISC",
   "dependencies": {
+    "discord-api-types": "^0.37.43",
     "discord.js": "^14.11.0",
     "dotenv": "^16.0.3",
-    "mysql2": "^3.3.3",
     "node-fetch": "^2.6.11",
     "openai": "^3.2.1"
   },

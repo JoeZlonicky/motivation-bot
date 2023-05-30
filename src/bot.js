@@ -23,7 +23,7 @@ console.log(`Collected ${commands.size} command(s).`);
 
 const commandHandler = new CommandHandler(commands);
 client.on(Discord.Events.InteractionCreate, async interaction => {
-    commandHandler.handleCommand(interaction);
+    await commandHandler.handleCommand(interaction);
 });
 
 (async () => {

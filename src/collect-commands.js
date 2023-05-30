@@ -4,6 +4,11 @@ const Discord = require('discord.js');
 
 const COMMAND_DIRECTORY = path.join(__dirname, 'commands');
 
+/**
+ * Tries to require the given file and add it to the command collection.
+ * @param {String} filePath - Absolute file path to the command .js file
+ * @param {Discord.Collection} commands - Collection to add to if successful
+ */
 function tryAddingCommand (filePath, commands) {
     const command = require(filePath);
 
@@ -26,7 +31,7 @@ function tryAddingCommand (filePath, commands) {
 }
 
 /**
- * Tries to collect all of the command .js files in the command directory.
+ * Tries to collect all the command .js files in the command directory.
  * @returns A Discord.Collection (a map data structure) mapping command name to a loaded command
  */
 function collectCommands () {
