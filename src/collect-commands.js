@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const Discord = require('discord.js');
 
-const COMMAND_DIRECTORY = path.join(__dirname, '..', 'commands');
+const COMMAND_DIRECTORY = path.join(__dirname, 'commands');
 
 function tryAddingCommand (filePath, commands) {
     const command = require(filePath);
