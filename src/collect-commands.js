@@ -6,7 +6,7 @@ const COMMAND_DIRECTORY = path.join(__dirname, 'commands');
 
 /**
  * Tries to require the given file and add it to the command collection.
- * @param {String} filePath - Absolute file path to the command .js file
+ * @param {string} filePath - Absolute file path to the command .js file
  * @param {Discord.Collection} commands - Collection to add to if successful
  */
 function tryAddingCommand (filePath, commands) {

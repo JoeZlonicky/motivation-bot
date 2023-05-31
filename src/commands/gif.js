@@ -1,13 +1,24 @@
 const { SlashCommandBuilder } = require('discord.js');
 const fetch = require('node-fetch');
+const NicknameModel = require('../database-models/nickname');
 
 const SEARCH_TEXT = 'I believe in you';
 const SEARCH_LIMIT = 50;
 
+/**
+ * Constructs the Giphy API URL.
+ * @returns {string} - API URL
+ */
 function constructAPIUrl () {
-    return `http://api.giphy.com/v1/gifs/search?q=${SEARCH_TEXT}&api_key=${process.env.GIPHY_API_KEY}&limit=${SEARCH_LIMIT}`;
+    const apiKey = process.env.GIPHY_API_KEY;
+    return `https://api.giphy.com/v1/gifs/search?q=${SEARCH_TEXT}&api_key=${apiKey}&limit=${SEARCH_LIMIT}`;
 }
 
+/**
+ * Attempts to use the Giphy API URL to get a relevant GIF URL
+ * @param {string} apiURL - Giphy API URL
+ * @returns {Promise<string|null>} - GIF URL, or null if the operation failed.
+ */
 async function tryToFetchGIFUrl (apiURL) {
     try {
         console.log(`Fetching GIF from "${apiURL}"...`);
@@ -32,8 +43,17 @@ async function tryToFetchGIFUrl (apiURL) {
     }
 }
 
-function constructReply (url, user = null) {
-    if (user && user.username) {
+/**
+ * Constructs a reply message based off the URL, the user, and whether they have a nickname.
+ * @param {string} url - GIF URL
+ * @param user - Discord user
+ * @returns {Promise<string>} - Reply message
+ */
+async function constructReply (url, user = null) {
+    const nicknameDocument = await NicknameModel.findOne({ userID: user.id }).exec();
+    if (nicknameDocument && nicknameDocument.nickname) {
+        return `You can do it, ${nicknameDocument.nickname}!\n${url}`;
+    } else if (user && user.username) {
         return `You can do it, ${user.username}!\n${url}`;
     } else {
         return `You can do it!\n${url}`;
@@ -47,7 +67,8 @@ module.exports = {
     async execute (interaction) {
         if (!process.env.GIPHY_API_KEY) {
             console.error('WARNING: GIPHY_API_KEY not set.');
-            await interaction.reply('I\'m sorry, but I\'m not properly set up to send GIFs right now! But I still believe in you!');
+            await interaction.reply(
+                'I\'m sorry, but I\'m not properly set up to send GIFs right now! But I still believe in you!');
             return;
         }
 
@@ -57,12 +78,12 @@ module.exports = {
         const gifURL = await tryToFetchGIFUrl(apiURL);
 
         if (!gifURL) {
-            await interaction.editReply('I\'m sorry, but I was unable to find a GIF for you... But I still believe in you!');
+            await interaction.editReply(
+                'I\'m sorry, but I was unable to find a GIF for you... But I still believe in you!');
             return;
         }
 
-        const replyMessage = constructReply(gifURL, interaction.user);
-
+        const replyMessage = await constructReply(gifURL, interaction.user);
         await interaction.editReply(replyMessage);
     }
 };

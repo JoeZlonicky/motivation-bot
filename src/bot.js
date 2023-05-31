@@ -1,5 +1,6 @@
 require('dotenv').config();
 const Discord = require('discord.js');
+const mongoose = require('mongoose');
 const { collectCommands } = require('./collect-commands.js');
 const { CommandHandler } = require('./command-handler.js');
 
@@ -17,21 +18,30 @@ const client = new Discord.Client({
         Discord.GatewayIntentBits.GuildMessages
     ]
 });
+console.log('Client created.');
 
+console.log('Collecting commands...');
 const commands = collectCommands();
 console.log(`Collected ${commands.size} command(s).`);
 
+console.log('Setting up command handler...');
 const commandHandler = new CommandHandler(commands);
 client.on(Discord.Events.InteractionCreate, async interaction => {
     await commandHandler.handleCommand(interaction);
 });
+console.log('Command handler set up.');
 
 (async () => {
     try {
+        console.log('Connecting to database...');
+        await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 });
+        console.log('Connected to database.');
+
         console.log('Logging in...');
         await client.login(process.env.BOT_TOKEN);
         console.log('Connected!');
     } catch (error) {
         console.error(error);
+        process.exit(1);
     }
 })();

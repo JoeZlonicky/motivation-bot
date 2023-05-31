@@ -6,6 +6,11 @@ const completionTemperature = 0.8; // Is on a scale of 0 to 1 where a higher val
 const completionMaxTokens = 100; // 100 tokens = ~75 English words
 const nCompletionReturns = 1;
 
+/**
+ * Constructs the prompt to give to the OpenAI API
+ * @param {string} about - What the prompt should be about
+ * @returns {string}
+ */
 function constructPrompt (about = '') {
     if (about) {
         return `Write me a strongly motivational message about ${about} that will make me believe in myself.`;
@@ -14,6 +19,12 @@ function constructPrompt (about = '') {
     }
 }
 
+/**
+ * Attempt to use the OpenAI API to generate a response.
+ * @param {OpenAIApi} openAI - OpenAIApi instance
+ * @param {string} prompt - Prompt to use
+ * @returns {Promise<string|null>} - Generated response, or null if the operation failed.
+ */
 async function tryToFetchAICompletion (openAI, prompt) {
     try {
         console.log(`Fetching OpenAI completion for the prompt "${prompt}"...`);
@@ -31,9 +42,20 @@ async function tryToFetchAICompletion (openAI, prompt) {
         }
 
         const randomIndex = Math.floor(Math.random() * completion.data.choices.length);
-        const randomCompletionText = completion.data.choices[randomIndex].text;
-        console.log(`Received the following completion: "${randomCompletionText}".`);
+        let randomCompletionText = completion.data.choices[randomIndex].text;
 
+        // Result usually has whitespace at the start, which messes with the following slicing
+        randomCompletionText = randomCompletionText.trim();
+
+        // Sometimes the answer is in double-quotes, which makes it feel like it isn't the bot talking to you.
+        if (randomCompletionText.startsWith('"')) {
+            randomCompletionText = randomCompletionText.slice(1);
+        }
+        if (randomCompletionText.endsWith('"')) {
+            randomCompletionText = randomCompletionText.slice(0, -1);
+        }
+
+        console.log(`Generated the following completion: ${randomCompletionText}`);
         return randomCompletionText;
     } catch (error) {
         console.error(error);
@@ -51,7 +73,8 @@ module.exports = {
     async execute (interaction) {
         if (!process.env.OPENAI_API_KEY) {
             console.error('WARNING: OPENAI_API_KEY not set.');
-            await interaction.reply('I\'m sorry, but I\'m not properly set up for AI right now! But I still believe in you!');
+            await interaction.reply(
+                'I\'m sorry, but I\'m not properly set up for AI right now! But I still believe in you!');
             return;
         }
 
@@ -65,11 +88,11 @@ module.exports = {
         const prompt = constructPrompt(interaction.options.getString('about'));
         const aiCompletion = await tryToFetchAICompletion(openAI, prompt);
 
-        if (!aiCompletion) {
-            await interaction.editReply('I\'m sorry, but I was unable to generate a response... But I still believe in you!');
-            return;
+        if (aiCompletion) {
+            await interaction.editReply(aiCompletion);
+        } else {
+            await interaction.editReply(
+                'I\'m sorry, but I was unable to generate a response... But I still believe in you!');
         }
-
-        await interaction.editReply(aiCompletion);
     }
 };

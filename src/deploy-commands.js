@@ -5,10 +5,10 @@ const { collectCommands } = require('./collect-commands.js');
 
 /**
  * Deploys commands to a specific server
- * @param {String[]} commandData - Array of command data as JSON strings
- * @param {String} token - Discord token
- * @param {String} clientID - Discord client ID
- * @param {String} serverID - Discord server ID
+ * @param {string[]} commandData - Array of command data as JSON strings
+ * @param {string} token - Discord token
+ * @param {string} clientID - Discord client ID
+ * @param {string} serverID - Discord server ID
  * @returns {Promise<void>}
  */
 async function deployToServer (commandData, token, clientID, serverID) {
@@ -28,9 +28,9 @@ async function deployToServer (commandData, token, clientID, serverID) {
 
 /**
  * Deploys commands globally.
- * @param {String[]} commandData - Array of command data as JSON strings
- * @param {String} token - Discord token
- * @param {String} clientID - Discord client ID
+ * @param {string[]} commandData - Array of command data as JSON strings
+ * @param {string} token - Discord token
+ * @param {string} clientID - Discord client ID
  * @returns {Promise<void>}
  */
 async function deployGlobal (commandData, token, clientID) {
