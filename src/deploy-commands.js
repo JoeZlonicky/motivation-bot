@@ -1,7 +1,7 @@
 require('dotenv').config();
 const readline = require('readline');
 const Discord = require('discord.js');
-const { collectCommands } = require('./collect-commands.js');
+const collectCommands = require('./collect-commands.js');
 
 /**
  * Deploys commands to a specific server

@@ -12,12 +12,12 @@ async function trySetNickname (userID, nickname) {
     const newDocument = { userID, nickname };
     const updateOptions = { upsert: true, new: true };
 
-    console.log(`Updating name for user ${userID} to "${nickname}"...`);
+    console.log(`Updating nickname for user ${userID} to "${nickname}"...`);
     try {
         const updatedDocument = await NicknameModel.findOneAndUpdate(filterByUser,
             newDocument,
             updateOptions).exec();
-        console.log(`Name updated to "${updatedDocument.nickname}".`);
+        console.log(`Nickname updated to "${updatedDocument.nickname}".`);
         return true;
     } catch (error) {
         console.error(error);
@@ -27,7 +27,7 @@ async function trySetNickname (userID, nickname) {
 
 /**
  * Attempts to clear any nickname given to the user.
- * @param userID - Discord ID
+ * @param {string} userID - Discord ID
  * @returns {Promise<number>} - Number of deleted documents. Returns -1 if operation failed.
  */
 async function tryClearNickname (userID) {

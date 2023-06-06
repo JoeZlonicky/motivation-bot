@@ -49,8 +49,13 @@ async function tryToFetchGIFUrl (apiURL) {
  * @param user - Discord user
  * @returns {Promise<string>} - Reply message
  */
-async function constructReply (url, user = null) {
-    const nicknameDocument = await NicknameModel.findOne({ userID: user.id }).exec();
+async function constructReply (url, user) {
+    let nicknameDocument = null;
+    try {
+        nicknameDocument = await NicknameModel.findOne({ userID: user.id }).exec();
+    } catch (error) {
+        console.error(error);
+    }
     if (nicknameDocument && nicknameDocument.nickname) {
         return `You can do it, ${nicknameDocument.nickname}!\n${url}`;
     } else if (user && user.username) {

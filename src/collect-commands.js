@@ -56,6 +56,4 @@ function collectCommands () {
     return commands;
 }
 
-module.exports = {
-    collectCommands
-};
+module.exports = collectCommands;
