@@ -1,10 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { Configuration, OpenAIApi } = require('openai');
 
-const completionModel = 'text-davinci-003';
-const completionTemperature = 0.8; // Is on a scale of 0 to 1 where a higher value results in more inconsistent replies
-const completionMaxTokens = 100; // 100 tokens = ~75 English words
-const nCompletionReturns = 1;
+const COMPLETION_MODEL = 'text-davinci-003';
+const COMPLETION_TEMPERATURE = 0.8; // Is on a scale of 0 to 1 where a higher value results in more inconsistent replies
+const COMPLETION_MAX_TOKENS = 100; // 100 tokens = ~75 English words
+const N_COMPLETION_RETURNS = 1;
 
 /**
  * Constructs the prompt to give to the OpenAI API
@@ -29,11 +29,11 @@ async function tryToFetchAICompletion (openAI, prompt) {
     try {
         console.log(`Fetching OpenAI completion for the prompt "${prompt}"...`);
         const completion = await openAI.createCompletion({
-            model: completionModel,
+            model: COMPLETION_MODEL,
             prompt,
-            temperature: completionTemperature,
-            max_tokens: completionMaxTokens,
-            n: nCompletionReturns
+            temperature: COMPLETION_TEMPERATURE,
+            max_tokens: COMPLETION_MAX_TOKENS,
+            n: N_COMPLETION_RETURNS
         });
 
         if (!completion || !completion.data || !completion.data.choices || completion.data.choices.length === 0) {

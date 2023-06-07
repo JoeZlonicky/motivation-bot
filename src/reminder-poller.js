@@ -1,15 +1,17 @@
-const ReminderModel = require('./database-models/reminder');
 const {
     ButtonBuilder,
     ButtonStyle,
     ActionRowBuilder
 } = require('discord.js');
+const ReminderModel = require('./database-models/reminder');
+const getName = require('./utility/get-name');
 
 const MIN_POLLING_INTERVAL_SECONDS = 10;
 const DEFAULT_POLLING_INTERVAL_SECONDS = 60;
+const BUTTON_INTERACTION_WAIT_TIME_MS = 1000 * 60 * 60; // 60 Minutes
 
 /**
- * For reminding Discord users.
+ * For reminding Discord users about reminders they have set.
  */
 class ReminderPoller {
     #discordClient = null;
@@ -156,35 +158,84 @@ class ReminderPoller {
         try {
             const user = await this.#discordClient.users.fetch(userID, false);
 
-            const message = (what) ? `Have you completed "${what}" yet?` : 'Have you completed the task yet?';
+            const message = await this.#constructReminderPromptMessage(user, what);
             const response = await user.send({
                 content: message,
                 components: [row]
             });
 
-            this.#updateLastNotified(reminderID).then(r => {});
+            this.#updateLastNotified(reminderID).then(_ => {});
 
             const confirmation = await response.awaitMessageComponent(
                 {
                     filter: interaction => interaction.user.id === user.id,
-                    time: 60 * 60 * 1000 // Wait for up to 60 minutes for a response
+                    time: BUTTON_INTERACTION_WAIT_TIME_MS
                 });
 
             if (confirmation.customId === 'done') {
                 await ReminderModel.deleteOne({ _id: reminderID });
+                const doneMessage = await this.#constructTaskDoneMessage(user);
                 await confirmation.update({
-                    content: 'Awesome! I\'ve cleared the reminder. Great job!',
+                    content: doneMessage,
                     components: []
                 });
             } else if (confirmation.customId === 'notYet') {
+                const notDoneMessage = await this.#constructTaskNotDoneMessage(user);
                 await confirmation.update({
-                    content: 'I believe in you! I\'ll remind you again in a bit.',
+                    content: notDoneMessage,
                     components: []
                 });
             }
         } catch (error) {
             console.error(error);
         }
+    }
+
+    /**
+     * Constructs a message for reminding the user.
+     * @param user - Discord User
+     * @param {string} what - What the reminder was about
+     * @returns {Promise<string>} - The constructed message
+     */
+    async #constructReminderPromptMessage (user, what) {
+        const name = await getName(user);
+        if (name) {
+            if (what) {
+                return `Hey, ${name}, have you completed "${what}" yet?`;
+            } else {
+                return `Hey, ${name}, have you completed the task yet?`;
+            }
+        } else if (what) {
+            return `Have you completed "${what}" yet?`;
+        } else {
+            return 'Have you completed the task yet?';
+        }
+    }
+
+    /**
+     * Constructs a message for congratulating the user.
+     * @param user - Discord User
+     * @returns {Promise<string>} - The constructed message
+     */
+    async #constructTaskDoneMessage (user) {
+        const name = await getName(user);
+        if (name) {
+            return `Awesome! I've cleared the reminder. Great job, ${name}!`;
+        }
+        return 'Awesome! I\'ve cleared the reminder. Great job!';
+    }
+
+    /**
+     * Constructs a message for telling the user they will be reminded again.
+     * @param user - Discord User
+     * @returns {Promise<string>} - The constructed message
+     */
+    async #constructTaskNotDoneMessage (user) {
+        const name = await getName(user);
+        if (name) {
+            return `I believe in you, ${name}! I'll remind you again in a bit.`;
+        }
+        return 'I believe in you! I\'ll remind you again in a bit.';
     }
 }
 

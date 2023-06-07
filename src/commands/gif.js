@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const fetch = require('node-fetch');
-const NicknameModel = require('../database-models/nickname');
+const getName = require('../utility/get-name');
 
 const SEARCH_TEXT = 'I believe in you';
 const SEARCH_LIMIT = 50;
@@ -43,28 +43,6 @@ async function tryToFetchGIFUrl (apiURL) {
     }
 }
 
-/**
- * Constructs a reply message based off the URL, the user, and whether they have a nickname.
- * @param {string} url - GIF URL
- * @param user - Discord user
- * @returns {Promise<string>} - Reply message
- */
-async function constructReply (url, user) {
-    let nicknameDocument = null;
-    try {
-        nicknameDocument = await NicknameModel.findOne({ userID: user.id }).exec();
-    } catch (error) {
-        console.error(error);
-    }
-    if (nicknameDocument && nicknameDocument.nickname) {
-        return `You can do it, ${nicknameDocument.nickname}!\n${url}`;
-    } else if (user && user.username) {
-        return `You can do it, ${user.username}!\n${url}`;
-    } else {
-        return `You can do it!\n${url}`;
-    }
-}
-
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('gif')
@@ -88,7 +66,11 @@ module.exports = {
             return;
         }
 
-        const replyMessage = await constructReply(gifURL, interaction.user);
-        await interaction.editReply(replyMessage);
+        const name = await getName(interaction.user);
+        if (name) {
+            await interaction.editReply(`You can do it, ${name}!\n${gifURL}`);
+        } else {
+            await interaction.editReply(`You can do it!\n${gifURL}`);
+        }
     }
 };
