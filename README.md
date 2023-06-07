@@ -1,10 +1,10 @@
 # Motivation Bot
 A NodeJS Discord bot to help you stay motivated!
 Features include:
-* Motivational GIFs via the Giphy API
-* AI-generated motivational messages via the OpenAI API
-* Set a nickname for the bot to call you. Nicknames persist via a MongoDB database
-* Get the bot to remind you to do something on an interval. Reminders persist via a MongoDB database.
+* Motivational GIFs via the Giphy API!
+* AI-generated motivational messages via the OpenAI API!
+* Set a nickname for the bot to call you! Nicknames persist via a MongoDB database!
+* Get the bot to remind you to do something on an interval! Reminders persist via a MongoDB database!
 * Run the bot in a container via Docker!
 
 ## Requirements
